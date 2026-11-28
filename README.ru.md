@@ -14,7 +14,7 @@
 
 | Компонент | Назначение |
 |---|---|
-| [`sing-box`](https://github.com/SagerNet/sing-box) 1.15.0-alpha.14 (canary, slim, собирается из исходников в Dockerfile, `ARG SINGBOX_VERSION`) | Прокси-runtime, владеет TUN. Build tags: `with_quic,with_grpc,with_utls,with_clash_api,badlinkname,tfogo_checklinkname0`. Go 1.26.11, `CGO_ENABLED=0`, upstream release LDFLAGS + версия и strip-флаги. |
+| [`sing-box`](https://github.com/SagerNet/sing-box) 1.15.0-alpha.15 (canary, slim, собирается из исходников в Dockerfile, `ARG SINGBOX_VERSION`) | Прокси-runtime, владеет TUN. Build tags: `with_quic,with_grpc,with_utls,with_clash_api,badlinkname,tfogo_checklinkname0`. Go 1.26.11, `CGO_ENABLED=0`, upstream release LDFLAGS + версия и strip-флаги. |
 | `healthcheck render` (Go) | Разбор Base64 URI, Clash YAML, Xray JSON, SIP008 и sing-box outbounds от пяти независимых провайдеров. URL, UA и необязательный HWID сохраняются для каждого; при сбое остаются последние рабочие узлы. Один TUN, один `select` и отдельные probe-порты. |
 | `entrypoint.sh` | Initial fetch+render, фоновое ежедневное обновление, foreground respawn-loop sing-box, ежечасное обслуживание логов и состояния. |
 | `healthcheck refresh` (вызывается из `sub-refresh.sh`) | Dual-mirror fetch через direct WAN → convert/merge → `sing-box check` → atomic swap → SIGTERM. Восстанавливает `select.now`, откатывает конфиг если новый не запустился. |
@@ -231,7 +231,7 @@ docker buildx imagetools inspect ghcr.io/inlarin/singbox-mikrotik:armv7
 | Нативная dashboard | опционально | выключена | выключена |
 | Swap | выключен | выключен | выключен |
 
-На RB4011 с RouterOS 7.25 и sing-box 1.15.0-alpha.14 проверены новый sing-tun stack, `multi_queue=1`, DNS cache `2048` и буфер `256KB` (2026-11-27, real-data probe и HTTPS-загрузка через TUN). Legacy `system` несовместим с multi-queue.
+На RB4011 с RouterOS 7.25 и sing-box 1.15.0-alpha.15 проверены новый sing-tun stack, `multi_queue=1`, DNS cache `2048` и буфер `256KB` (2026-11-28, real-data probe и HTTPS-загрузка через TUN). Legacy `system` несовместим с multi-queue.
 
 Используй `restart-policy=on-failure`, `restart-max-count=5`, `restart-interval=5m` и нативную `healthcheck probe`. `stop-on-unhealthy` пока не включай: временный WAN-сбой не должен без нужды останавливать контейнер. Topic `container` направляй в memory или remote-syslog, а не в disk action.
 
@@ -244,7 +244,7 @@ docker buildx imagetools inspect ghcr.io/inlarin/singbox-mikrotik:armv7
 | 7.23rc2+ | ✓ починили апстрим (release note: *"route — revert to old routing rule priorities for containers"*) |
 | 7.23.2 | ✓ RB4011 + RB5009 работали на нём до 2026-08-31 (стек снят по решению владельца, не из-за проблем) |
 | 7.24.x | не проверялось (changelog 7.24.1 по контейнерам: только *"improve host isolation when privileged=yes"*) |
-| **7.25** | ✓ работает; проверено 2026-11-27 на RB4011iGS+5HacQ2HnD с sing-box 1.15.0-alpha.14, GHCR pull, real-data probe и kill-switch |
+| **7.25** | ✓ работает; проверено 2026-11-28 на RB4011iGS+5HacQ2HnD с sing-box 1.15.0-alpha.15, GHCR pull, real-data probe и kill-switch |
 
 ### 3. Steering — что заворачивать в туннель
 

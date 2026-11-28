@@ -1,4 +1,4 @@
-ARG SINGBOX_VERSION=1.15.0-alpha.14
+ARG SINGBOX_VERSION=1.15.0-alpha.15
 ARG ENABLE_UPX=1
 
 FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS gobuild

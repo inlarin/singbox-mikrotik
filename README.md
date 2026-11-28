@@ -14,7 +14,7 @@ Fill any combination of `SUBSCRIPTION_1…5` and optional `HW_ID_1…5`; at leas
 
 | Component | Purpose |
 |---|---|
-| [`sing-box`](https://github.com/SagerNet/sing-box) 1.15.0-alpha.14 (canary, slim, built from source in the Dockerfile, `ARG SINGBOX_VERSION`) | Proxy runtime, owns the TUN. Build tags: `with_quic,with_grpc,with_utls,with_clash_api,badlinkname,tfogo_checklinkname0`. Go 1.26.11, `CGO_ENABLED=0`, upstream release LDFLAGS plus version and strip flags. |
+| [`sing-box`](https://github.com/SagerNet/sing-box) 1.15.0-alpha.15 (canary, slim, built from source in the Dockerfile, `ARG SINGBOX_VERSION`) | Proxy runtime, owns the TUN. Build tags: `with_quic,with_grpc,with_utls,with_clash_api,badlinkname,tfogo_checklinkname0`. Go 1.26.11, `CGO_ENABLED=0`, upstream release LDFLAGS plus version and strip flags. |
 | `healthcheck render` (Go) | Parse Base64 URI lists, Clash YAML, Xray JSON, SIP008 and sing-box outbounds from up to five independent providers. Preserve each provider's URL, UA and optional HWID; failed providers keep their last known good nodes. Emit one TUN, one `select` and isolated probe ports. |
 | `entrypoint.sh` | Initial fetch+render, background daily refresh, foreground sing-box respawn loop, hourly log/state maintenance. |
 | `healthcheck refresh` (called by `sub-refresh.sh`) | Dual-mirror fetch over direct WAN → convert/merge → `sing-box check` → atomic swap → SIGTERM. Restores `select.now` and rolls back if the new config does not start. |
@@ -231,7 +231,7 @@ The container keeps the fixed `root-dir=<storage>/containers/singbox` and `remot
 | Native dashboard | optional | disabled | disabled |
 | Swap | disabled | disabled | disabled |
 
-The new sing-tun stack, `multi_queue=1`, DNS cache `2048`, and a `256KB` cache buffer were verified on RB4011 with RouterOS 7.25 and sing-box 1.15.0-alpha.14 on 2026-11-27 using real-data probes and an HTTPS download through TUN. Legacy `system` is incompatible with multi-queue.
+The new sing-tun stack, `multi_queue=1`, DNS cache `2048`, and a `256KB` cache buffer were verified on RB4011 with RouterOS 7.25 and sing-box 1.15.0-alpha.15 on 2026-11-28 using real-data probes and an HTTPS download through TUN. Legacy `system` is incompatible with multi-queue.
 
 Use `restart-policy=on-failure`, `restart-max-count=5`, `restart-interval=5m` and the native `healthcheck probe` command. `stop-on-unhealthy` should remain disabled until a temporary WAN outage has been shown not to stop the container unnecessarily. Keep the `container` log topic on a memory or remote-syslog action, not on a disk action.
 
@@ -244,7 +244,7 @@ Use `restart-policy=on-failure`, `restart-max-count=5`, `restart-interval=5m` an
 | 7.23rc2+ | ✓ fixed upstream (release note: *"route — revert to old routing rule priorities for containers"*) |
 | 7.23.2 | ✓ RB4011 + RB5009 ran on it until 2026-08-31 (stack removed by the owner's decision, not because of problems) |
 | 7.24.x | untested (7.24.1 changelog for containers: only *"improve host isolation when privileged=yes"*) |
-| **7.25** | ✓ works; verified 2026-11-27 on RB4011iGS+5HacQ2HnD with sing-box 1.15.0-alpha.14, GHCR pull, real-data probe, and kill-switch |
+| **7.25** | ✓ works; verified 2026-11-28 on RB4011iGS+5HacQ2HnD with sing-box 1.15.0-alpha.15, GHCR pull, real-data probe, and kill-switch |
 
 ### 3. Steering — what goes through the tunnel
 
